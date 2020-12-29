@@ -1,0 +1,191 @@
+{
+	"info": {
+		"_postman_id": "2759fcbd-2c78-483d-bd2c-86ed2dcdd035",
+		"name": "oAuth Login API",
+		"description": "Login API - > Generate Token / Refresh Token",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.environment.unset(\"authCode\");\r",
+							"pm.environment.set(\"authCode\",jsonData[0].authCode);\r",
+							"\r",
+							"pm.test(\"authCode is present\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"authCode\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"siteId\": \"{{siteId}}\",\r\n    \"clientId\": \"{{clientIdMobile}}\",  \r\n   \"resourceOwnerCredentials\":    {\r\n      \"USERNAME\": \"{{username}}\",\r\n      \"PASSWORD\": \"{{Password}}\"\r\n   }\r\n   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{mobileendpoint}}/api/v1/oauth/login",
+					"host": [
+						"{{mobileendpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"oauth",
+						"login"
+					]
+				},
+				"description": "POSTRequest, gives auth code"
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.environment.unset(\"refreshToken\");\r",
+							"pm.environment.set(\"refreshToken\",jsonData[0].token);\r",
+							"pm.environment.unset(\"oAuthToken\");\r",
+							"pm.environment.set(\"oAuthToken\",jsonData[1].token);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"tokenType is present\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"tokenType\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"token is present\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"token\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"token type is REFRESH\", function() {\r",
+							"    pm.expect(jsonData[0].tokenType).to.eql(\"REFRESH\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"token type is OAuth\", function() {\r",
+							"  pm.expect(jsonData[1].tokenType).to.eql(\"OAuth\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \"siteId\": \"{{siteId}}\",\r\n    \"clientId\": \"{{clientIdMobile}}\",    \r\n    \"authCode\": \"{{authCode}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{mobileendpoint}}/api/v1/oauth/self/tokens",
+					"host": [
+						"{{mobileendpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"oauth",
+						"self",
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"tokenType is present\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"tokenType\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"token is present\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"token\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"token type is REFRESH\", function() {\r",
+							"    pm.expect(jsonData[0].tokenType).to.eql(\"REFRESH\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"token type is OAuth\", function() {\r",
+							"  pm.expect(jsonData[1].tokenType).to.eql(\"OAuth\");\r",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"siteId\": \"{{siteId}}\",\r\n   \"scope\": null,\r\n   \"clientId\": \"{{clientIdMobile}}\",\r\n   \"clientCredentials\": null,\r\n   \"authCode\": null,\r\n   \"token\": \"{{refreshToken}}\",\r\n   \"tokenType\": \"REFRESH\",\r\n   \"tokenParams\":    {\r\n      \"expiresIn\": \"900\",\r\n      \"issueTime\": \"1600093192889\"\r\n   },\r\n   \"resourceOwnerCredentials\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{mobileendpoint}}/api/v1/oauth/self/tokens",
+					"host": [
+						"{{mobileendpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"oauth",
+						"self",
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

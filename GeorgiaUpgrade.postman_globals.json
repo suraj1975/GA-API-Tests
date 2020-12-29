@@ -1,0 +1,24 @@
+{
+	"id": "3d2d1850-eea9-4fbb-8862-c0e9d2203764",
+	"values": [
+		{
+			"key": "siteId",
+			"value": "36",
+			"enabled": true
+		},
+		{
+			"key": "clientIdMobile",
+			"value": "GAMOBILE",
+			"enabled": true
+		},
+		{
+			"key": "clientIdPortal",
+			"value": "GAPORTAL",
+			"enabled": true
+		}
+	],
+	"name": "GeorgiaUpgrade Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2020-12-02T09:03:41.208Z",
+	"_postman_exported_using": "Postman/7.36.0"
+}
